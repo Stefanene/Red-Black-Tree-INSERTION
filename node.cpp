@@ -9,12 +9,15 @@ Node::Node() {
   data = 0;
   right = NULL;
   left = NULL;
+  color = 0; //intially black
+  parent = NULL;
 }
 
 Node::~Node() {
   //deleter
   right = NULL;
   left = NULL;
+  parent = NULL;
 }
 
 //setters
@@ -34,6 +37,10 @@ void Node::setColor(int newC) {
   color = newC;
 }
 
+void Node::setParent(Node* newP) {
+  parent = newP;
+}
+
 //getters
 int Node::getData() {
   return data;
@@ -49,4 +56,8 @@ Node* Node::getLeft() {
 
 int Node::getColor() {
   return color;
+}
+
+Node* Node::getParent() {
+  return parent;
 }

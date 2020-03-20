@@ -13,15 +13,18 @@ class Node {
   void setRight(Node*);
   void setLeft(Node*);
   void setColor(int);
+  void setParent(Node*);
   //getters
   int getData();
   Node* getRight();
   Node* getLeft();
   int getColor();
- private:
+  Node* getParent();
+private:
   int data;
   Node* right;
   Node* left;
   int color;  //0 = black, 1 = red
+  Node* parent;
 };
 #endif
