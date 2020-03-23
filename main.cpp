@@ -2,6 +2,7 @@
   This is a Red-Black Tree Insertion algorithm by Stefan Ene
     Using most of the base code from my Binary Search Tree algorithm
     Colored output from https://stackoverflow.com/questions/9158150/colored-output-in-c/9158263
+    Balancing Tree references from https://www.geeksforgeeks.org/c-program-red-black-tree-insertion/
 */
 
 #include <iostream>
@@ -9,7 +10,6 @@
 #include <fstream>
 //colors
 #define RESET   "\033[0m"
-#define BLACK   "\033[30m"
 #define RED     "\033[31m"
 #define BLUE    "\033[34m"
 
@@ -42,7 +42,10 @@ void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height);
 void READ(Node* &head, int &height);
 void PRINT(Node* root, Trunk *prev, bool isLeft);
 void parse(char* in, int* modif, int &count);
-void balance(Node* &head);  //function for balancing tree
+//functions for balancing/fixing tree
+void balance(Node* &head, Node* &curr);
+void rotateLeft(Node* &head, Node* &curr);
+void rotateRight(Node* &head, Node* &curr);
 
 //MAIN function
 int main() {
@@ -73,7 +76,7 @@ int main() {
       Node* prev = NULL;
       curr = head;
       ADD(head, curr, prev, val, height);
-      balance(head);
+      balance(head, curr);
       cout << endl << val << " has been added:" << endl;
     }
     else if (strcmp(input, "read") == 0) {
@@ -98,8 +101,51 @@ int main() {
 }
 
 //balance method to keep Red-Black properties of tree
-void balance(Node* &head) {
+//https://www.geeksforgeeks.org/c-program-red-black-tree-insertion/
+void balance(Node* &head, Node* &curr) {
+  Node* parent_pt = NULL;
+  Node* grandparent_pt = NULL;
   
+}
+
+void rotateLeft(Node* &head, Node* &curr) {
+  Node* rightPtr = curr->getRight(); 
+  //begin rotation
+  curr->setRight(rightPtr->getLeft()); 
+  if (curr->getRight() != NULL) {
+    (curr->getRight())->setParent(curr); 
+  }
+  rightPtr->setParent(curr->getParent());
+  //if working with head
+  if (curr->getParent() == NULL) {
+    head = rightPtr; 
+  } else if (curr == (curr->getParent())->getLeft()) {
+    (curr->getParent())->setLeft(rightPtr); 
+  } else {
+    (curr->getParent())->setRight(rightPtr); 
+  }  
+  rightPtr->setLeft(curr); 
+  curr->setParent(rightPtr);
+}
+
+void rotateRight(Node* &head, Node* & curr) {
+  Node *leftPtr = curr->getLeft(); 
+  //being rotation
+  curr->setLeft(leftPtr->getRight()); 
+  if (curr->getLeft() != NULL) {
+    (curr->getLeft())->setParent(curr); 
+  }  
+  leftPtr->setParent(curr->getParent());
+  //if working with head
+  if (curr->getParent() == NULL) {
+    head = leftPtr; 
+  } else if (curr == (curr->getParent())->getLeft()) {
+    (curr->getParent())->setLeft(leftPtr); 
+  } else {
+    (curr->getParent())->setRight(leftPtr);
+  }
+  leftPtr->setRight(curr); 
+  curr->setParent(leftPtr);
 }
 
 //ADD method from my previous BTS project
@@ -119,6 +165,7 @@ void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height) {
 	curr->setData(val);
 	prev->setLeft(curr);
 	curr->setParent(prev);
+	balance(head, curr);  //balance tree
 	return;
       } else {  //if !empty then keep going
 	ADD(head, curr, prev, val, height);
@@ -131,6 +178,7 @@ void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height) {
 	curr->setData(val);
 	prev->setRight(curr);
 	curr->setParent(prev);
+	balance(head, curr);  //balance tree
 	return;
       } else {  //if !empty then keep going
 	ADD(head, curr, prev, val, height);
@@ -178,6 +226,7 @@ void READ(Node* &head, int &height) {
       if(modif[i] == 0) break;
       curr = head;
       ADD(head, curr, prev, modif[i], height);
+      balance(head, curr);
     }
   } 
 }
