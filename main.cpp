@@ -103,9 +103,65 @@ int main() {
 //balance method to keep Red-Black properties of tree
 //https://www.geeksforgeeks.org/c-program-red-black-tree-insertion/
 void balance(Node* &head, Node* &curr) {
-  Node* parent_pt = NULL;
-  Node* grandparent_pt = NULL;
-  
+  Node* parent = NULL;
+  Node* grandparent = NULL;
+  while ((curr != head) && (curr->getColor() != 0) &&
+	 ((curr->getParent())->getColor() == 1)) {
+    parent = curr->getParent();
+    grandparent = parent->getParent();
+    //Case A: parent = left child of grandparent
+    if (parent == grandparent->getLeft()) {
+      Node* uncle = grandparent->getRight();
+      //Case 1: uncle = red, then only recolor
+      if (uncle != NULL && uncle->getColor() != 0) {
+	grandparent->setColor(1);//red
+	parent->setColor(0);//black
+	uncle->setColor(0);//black
+	curr = grandparent;
+      }
+      else {
+	//Case 2: curr = right child of parent, then rotate left
+	if (curr == parent->getRight()) {
+	  rotateLeft(head, parent);
+	  curr = parent;
+	  parent =  curr->getParent();
+	}
+	//Case 3: curr - left child of parent, then rotate right
+	rotateRight(head, grandparent);
+	//swap colors of parent and grandparent
+	int tempC = parent->getColor();
+	parent->setColor(grandparent->getColor());
+	grandparent->setColor(tempC);
+	curr = parent;
+      }
+    }
+    //Case B: parent = right child of grandparent
+    else {
+      Node* uncle = grandparent->getLeft();
+      //Case 1: uncle = red, then onyl recolor
+      if (uncle != NULL && uncle->getColor() != 0) {
+	grandparent->setColor(1);//red
+	parent->setColor(0);//black
+	uncle->setColor(0);//black
+	curr = grandparent;
+      }
+      else {
+	//Case 2: curr = left child of parent, then rotate right
+	if (curr == parent->getLeft()) {
+	  rotateRight(head, parent);
+	  curr = parent;
+	  parent = curr->getParent();
+	}
+	//Case 3: curr = right child of parent, then rotate left
+	rotateLeft(head, grandparent);
+	//swap color of parent and grandparent
+	int tempC = parent->getColor();
+	parent->setColor(grandparent->getColor());
+	grandparent->setColor(tempC);
+	curr = parent;
+      }
+    }
+  }
 }
 
 void rotateLeft(Node* &head, Node* &curr) {
@@ -251,7 +307,7 @@ void PRINT(Node* root, Trunk *prev, bool isLeft) {
     prev -> str = prev_str;
   }
   showTrunks(trunk);
-  if (root->getColor() == 0) {  //balck
+  if (root->getColor() == 0) {  //black
     cout << BLUE << root->getData() << RESET << endl;
   } else {  //red
     cout << RED << root->getData() << RESET << endl;
