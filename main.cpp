@@ -1,5 +1,6 @@
 /*
   This is a Red-Black Tree Insertion algorithm by Stefan Ene
+   Works Cited:
     Using most of the base code from my Binary Search Tree algorithm
     Colored output from https://stackoverflow.com/questions/9158150/colored-output-in-c/9158263
     Balancing Tree references from https://www.geeksforgeeks.org/c-program-red-black-tree-insertion/
@@ -162,6 +163,7 @@ void balance(Node* &head, Node* &curr) {
       }
     }
   }
+  head->setColor(0);
 }
 
 void rotateLeft(Node* &head, Node* &curr) {
@@ -282,7 +284,6 @@ void READ(Node* &head, int &height) {
       if(modif[i] == 0) break;
       curr = head;
       ADD(head, curr, prev, modif[i], height);
-      balance(head, curr);
     }
   } 
 }
