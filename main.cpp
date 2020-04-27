@@ -39,8 +39,8 @@ void showTrunks(Trunk *p) {//helper method for printing
 }
 
 //functions
-void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height);
-void READ(Node* &head, int &height);
+void ADD(Node* &head, Node* &curr, Node*& prev, int val);
+void READ(Node* &head);
 void PRINT(Node* root, Trunk *prev, bool isLeft);
 void parse(char* in, int* modif, int &count);
 //functions for balancing/fixing tree
@@ -55,7 +55,6 @@ int main() {
   char read[10000];  //file input
   int modif[100]; //parsed input for insertion
   Node* head = NULL;
-  int height = 0; //keep trach of tree height in terms of balck nodes
   //program
   cout << "=========================" << endl;
   cout << "Welcome to my Red-Black Tree INSERTION." << endl;
@@ -73,16 +72,15 @@ int main() {
       cin >> val;
       cin.clear();
       cin.ignore(10000, '\n');
-      Node* curr = NULL;
+      Node* curr = head;
       Node* prev = NULL;
-      curr = head;
-      ADD(head, curr, prev, val, height);
-      balance(head, curr);
+      ADD(head, curr, prev, val);
+      if(curr != head) balance(head, curr);
       cout << endl << val << " has been added:" << endl;
     }
     else if (strcmp(input, "read") == 0) {
       //make sure arrays are clear
-      READ(head, height);
+      READ(head);
     }
     else if (strcmp(input, "print") == 0) {
       cout << "=========================" << endl;
@@ -186,7 +184,7 @@ void rotateLeft(Node* &head, Node* &curr) {
   curr->setParent(rightPtr);
 }
 
-void rotateRight(Node* &head, Node* & curr) {
+void rotateRight(Node* &head, Node* &curr) {
   Node *leftPtr = curr->getLeft(); 
   //being rotation
   curr->setLeft(leftPtr->getRight()); 
@@ -207,12 +205,12 @@ void rotateRight(Node* &head, Node* & curr) {
 }
 
 //ADD method from my previous BTS project
-void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height) {
+void ADD(Node* &head, Node* &curr, Node*& prev, int val) {
   if (head == NULL) {
     head = new Node();
+    curr = head;
     head->setData(val);
     head->setColor(0);  //head is always black
-    height = 1; //height of one black node
     return;
   } else {
     if (val < curr->getData()) {  //lower goes left
@@ -226,7 +224,7 @@ void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height) {
 	balance(head, curr);  //balance tree
 	return;
       } else {  //if !empty then keep going
-	ADD(head, curr, prev, val, height);
+	ADD(head, curr, prev, val);
       }
     } else {
       prev = curr;
@@ -239,14 +237,14 @@ void ADD(Node* &head, Node* &curr, Node*& prev, int val, int &height) {
 	balance(head, curr);  //balance tree
 	return;
       } else {  //if !empty then keep going
-	ADD(head, curr, prev, val, height);
+	ADD(head, curr, prev, val);
       }
     }
   }
 }
 
 //READ function from file
-void READ(Node* &head, int &height) {
+void READ(Node* &head) {
   char in[10000];
   char fileName[100];
   int modif[100];
@@ -283,7 +281,7 @@ void READ(Node* &head, int &height) {
     for (int i = 0; i < siz; i++) {
       if(modif[i] == 0) break;
       curr = head;
-      ADD(head, curr, prev, modif[i], height);
+      ADD(head, curr, prev, modif[i]);
     }
   } 
 }
